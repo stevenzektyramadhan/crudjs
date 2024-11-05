@@ -1,0 +1,155 @@
+<!-- tabel start -->
+<table class="table mt-5  table-dark table-striped">
+  <thead>
+    <tr>
+      <th scope="col">Nama</th>
+      <th scope="col">NIM</th>
+      <th scope="col">Prodi</th>
+      <th scope="col">Action</th>
+
+    </tr>
+  </thead>
+  <tbody>
+    <% for(let result of results) {%>
+    <tr>
+      <td><%= result.nama%></td>
+      <td><%= result.nim%></td>
+      <td><%= result.prodi%></td>
+      <td>
+        <div class="d-flex gap-2">
+        <form action="/delete/<%= result.id %>" method="post">
+          <button class="btn btn-danger">Hapus</button> 
+       </form>
+        
+  <!-- Button update -->
+ <!-- Button trigger modal -->
+ <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#Update<%= result.id %>">Update</button>
+ <!-- Modal -->
+         <div class="modal fade" id="Update<%= result.id %>" tabindex="-1" aria-labelledby="exampleModalLabelUpdate" aria-hidden="true">
+           <div class="modal-dialog">
+             <div class="modal-content">
+               <div class="modal-header">
+                 <h5 class="modal-title" id="exampleModalLabelUpdate">Update data Mahasiswa</h5>
+                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+               </div>
+               <div class="modal-body" id="thisModal">
+                 <div class="inputan">
+                   <form action="/update/<%= result.id %>" method="post" id="dataForm">
+                     <div class="mb-3">
+                       <input type="text" class="form-control" name="nama" value="<%= result.nama %>" aria-describedby="emailHelp" required>
+                     </div
+                     <div class="m-3">
+                       <input type="text" class="form-control" name="nim" value="<%= result.nim %>" aria-describedby="emailHelp" required>
+                     </div
+                     <div class="mb-3">
+                       <input type="text" class="form-control" name="prodi" value="<%= result.prodi %>" aria-describedby="emailHelp" required>
+                     </div
+                   
+                     <div class="modal-footer">
+                       <button type="submit" class="btn btn-primary">submit</button>
+                     </div>
+                   </form>
+                 </div>
+               </div>
+             </div>
+           </div>
+         </div>
+         </div>       
+  <!-- Button update end -->
+      </td>
+    </tr>
+    <%}%>
+  </tbody>
+</table>
+<!-- tabel end -->
+
+<!-- Modal Insert data start -->
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Tambah</button>
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Tambahkan mahasiswa</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="thisModal">
+        <div class="inputan">
+          <form action="/add" method="post" id="dataForm">
+            <div class="mb-3">
+              <input type="text" class="form-control" id="nama" name="nama" placeholder="Masukan nama" aria-describedby="emailHelp" required>
+            </div
+            <div class="m-3">
+              <input type="text" class="form-control" id="nim" name="nim" placeholder="Masukan NIM" aria-describedby="emailHelp" required>
+            </div
+            <div class="mb-3">
+              <input type="text" class="form-control" id="prodi" name="prodi" placeholder="Masukan nama Prodi" aria-describedby="emailHelp" required>
+            </div
+          
+            <div class="modal-footer">
+              <button type="submit" class="btn btn-primary">submit</button>
+              <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary">Save changes</button> -->
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal end -->
+<!-- js -->
+<script>
+ // Submit form menggunakan JavaScript atau jQuery
+// $('#dataForm').on('submit', function (e) {
+//     e.preventDefault(); // Mencegah reload halaman
+//     $.ajax({
+//         url: '/insert', // Sesuaikan dengan route untuk insert data
+//         type: 'POST',
+//         data: $(this).serialize(),
+//         success: function (response) {
+//             if (response === "insert berhasil") {
+//                 $('#thisModal').modal('hide'); // Tutup modal
+//                 $('#dataForm')[0].reset(); // Reset form agar kosong kembali
+//                 // Berikan notifikasi atau refresh data di halaman
+//             }
+//         },
+//         error: function () {
+//             console.error("Gagal menambahkan data.");
+//         }
+//     });
+// });
+
+document.getElementById('dataForm').addEventListener('submit', async (event) => {
+    event.preventDefault();
+    
+    const nama = document.getElementById('nama').value
+    const nim = document.getElementById('nim').value
+    const prodi = document.getElementById('prodi').value
+
+    try {
+      const response = await fetch('/add', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ nama, nim, prodi })
+        });
+        
+        if (response.status === 409) {
+            const result = await response.json();
+            alert(result.message); // Tampilkan pesan error
+        } else if (response.ok) {
+            alert('Data berhasil ditambahkan');
+            // Reset form atau lakukan aksi lain jika perlu
+        } else {
+            alert('Terjadi kesalahan saat menambah data');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Gagal menghubungi server');
+    }
+});
+
+
+</script>
+<!-- js -->
